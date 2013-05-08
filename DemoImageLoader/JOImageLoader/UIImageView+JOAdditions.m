@@ -35,7 +35,7 @@ static char imageUrlKey = '\0';
     {
         return nil;
     }
-     self.image = nil;
+     self.image = placeholder;
     self.urlString = str;
     NSAssert(imageLoader!= nil, @"Must have set a Image Loader");
     if (useIndicator)
