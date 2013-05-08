@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "JOImageLoader.h"
 @interface JOAppDelegate : UIResponder <UIApplicationDelegate>
-
+@property (nonatomic,strong) JOImageLoader * loader;
 @property (strong, nonatomic) UIWindow *window;
 
 @end

@@ -7,11 +7,14 @@
 //
 
 #import "JOAppDelegate.h"
-
+#import "UIImageView+JOAdditions.h"
 @implementation JOAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+
+    _loader = [[JOImageLoader alloc] init];
+    [UIImageView setImageLoader: _loader];
     // Override point for customization after application launch.
     return YES;
 }

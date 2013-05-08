@@ -7,6 +7,7 @@
 //
 
 #import "JOSecondViewController.h"
+#import "UIImageView+JOAdditions.h"
 
 @interface JOSecondViewController ()
 
@@ -17,6 +18,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [_imageview setImageWithUrlString:@"http://a29.phobos.apple.com/us/r1000/080/Purple/v4/ce/2f/0a/ce2f0a9e-abf4-1d05-829b-5910f62cbe3f/mzl.iafznefm.jpg" placeHolder:nil animate:YES];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 

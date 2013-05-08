@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface JOFirstViewController : UIViewController
+@interface JOFirstViewController : UITableViewController
 
 @end

@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface JOSecondViewController : UIViewController
+@property (weak, nonatomic) IBOutlet UIImageView *imageview;
 
 @end
