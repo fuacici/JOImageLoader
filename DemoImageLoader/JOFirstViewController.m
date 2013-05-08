@@ -30,7 +30,7 @@
         img.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin;
         [cell.contentView addSubview: img];
     }
-    [img setImageWithUrlString:@"http://a501.phobos.apple.com/us/r1000/088/Purple/v4/c3/80/18/c380186e-7b1c-b76b-cf96-731987e53932/appicon.png" placeHolder:nil animate:NO];
+    [img setImageWithUrlString:@"http://a501.phobos.apple.com/us/r1000/088/Purple/v4/c3/80/18/c380186e-7b1c-b76b-cf96-731987e53932/appicon.png" placeHolder:nil animate:NO indicator:YES];
     return cell;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

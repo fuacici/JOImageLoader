@@ -11,7 +11,8 @@
 @class JOImageLoader;
 @interface UIImageView(JOAdditions)
 +(void) setImageLoader:(JOImageLoader*) tloader;
-- (id)setImageWithUrlString:(NSString *) urlstring placeHolder:(UIImage *) placeholder animate:(BOOL) animate;
+- (id)setImageWithUrlString:(NSString *) urlstring placeHolder:(UIImage *) placeholder animate:(BOOL) animate  indicator:(BOOL) useIndicator;
+- (id)setImageWithUrlString:(NSString *) urlstring;
 @end
 
 /**/

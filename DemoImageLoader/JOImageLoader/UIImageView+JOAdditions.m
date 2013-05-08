@@ -18,9 +18,14 @@ static char imageUrlKey = '\0';
 @end
 
 @implementation UIImageView(JOAdditions)
-- (id)setImageWithUrlString:(NSString *) str placeHolder:(UIImage *) placeholder animate:(BOOL) animate
-{
 
+
+- (id)setImageWithUrlString:(NSString *) urlstring
+{
+   return  [self setImageWithUrlString: urlstring placeHolder:nil animate:NO indicator:NO];
+}
+- (id)setImageWithUrlString:(NSString *) str placeHolder:(UIImage *) placeholder animate:(BOOL) animate  indicator:(BOOL) useIndicator
+{
     if (!str)
     {
         self.urlString = nil;
@@ -33,19 +38,29 @@ static char imageUrlKey = '\0';
      self.image = nil;
     self.urlString = str;
     NSAssert(imageLoader!= nil, @"Must have set a Image Loader");
-    [self.indicator startAnimating];
+    if (useIndicator)
+    {
+            [self.indicator startAnimating];
+    }
     [imageLoader loadImageWithUrl: str onSuccess:^(UIImage *image, NSString *urlString) {
         if ([urlString isEqualToString: self.urlString])
         {
             self.image = image;
-            [self.indicator stopAnimating];
+            if (useIndicator)
+            {
+                [self.indicator stopAnimating];
+            }
+        
         }
                 
     } onFail:^(NSString *urlString, NSError *err) {
         if ([urlString isEqualToString: self.urlString])
         {
             self.image = nil;
-            [self.indicator stopAnimating];
+            if (useIndicator)
+            {
+                [self.indicator stopAnimating];
+            }
         }
         
     }];
