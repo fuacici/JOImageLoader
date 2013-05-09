@@ -3,7 +3,7 @@
 //  liulianclient
 //
 //  Created by Joost💟Blair on 5/3/13.
-//  Copyright (c) 2013 yang alef. All rights reserved.
+//  Copyright (c) 2013 . All rights reserved.
 //
 
 #import "JOImageCache.h"
@@ -118,7 +118,7 @@
 }
 - (void)moveToDisk:(CLCache *)cache
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
         NSData * data = UIImagePNGRepresentation(cache.image);
         [data writeToFile:[self cachePathForKey:cache.key] atomically:YES];
         dispatch_async(dispatch_get_main_queue(), ^{

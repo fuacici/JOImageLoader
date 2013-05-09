@@ -3,7 +3,7 @@
 //  liulianclient
 //
 //  Created by Joost💟Blair on 5/3/13.
-//  Copyright (c) 2013 yang alef. All rights reserved.
+//  Copyright (c) 2013 . All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
