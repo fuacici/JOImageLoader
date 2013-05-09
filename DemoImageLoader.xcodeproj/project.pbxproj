@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C83BE2A9173B89E200B2DE15 /* JOImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A4173B89E200B2DE15 /* JOImageCache.m */; };
+		C83BE2AA173B89E200B2DE15 /* JOImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A6173B89E200B2DE15 /* JOImageLoader.m */; };
+		C83BE2AB173B89E200B2DE15 /* UIImageView+JOAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */; };
 		C8FFBDF2173A2FE4003371E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF1173A2FE4003371E8 /* UIKit.framework */; };
 		C8FFBDF4173A2FE4003371E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF3173A2FE4003371E8 /* Foundation.framework */; };
 		C8FFBDF6173A2FE4003371E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF5173A2FE4003371E8 /* CoreGraphics.framework */; };
@@ -23,12 +26,15 @@
 		C8FFBE15173A2FE4003371E8 /* JOSecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FFBE14173A2FE4003371E8 /* JOSecondViewController.m */; };
 		C8FFBE17173A2FE4003371E8 /* second.png in Resources */ = {isa = PBXBuildFile; fileRef = C8FFBE16173A2FE4003371E8 /* second.png */; };
 		C8FFBE19173A2FE4003371E8 /* second@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C8FFBE18173A2FE4003371E8 /* second@2x.png */; };
-		C8FFBE26173A30E0003371E8 /* JOImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FFBE21173A30E0003371E8 /* JOImageCache.m */; };
-		C8FFBE27173A30E0003371E8 /* JOImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FFBE23173A30E0003371E8 /* JOImageLoader.m */; };
-		C8FFBE28173A30E0003371E8 /* UIImageView+JOAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C8FFBE25173A30E0003371E8 /* UIImageView+JOAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C83BE2A3173B89E200B2DE15 /* JOImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOImageCache.h; sourceTree = "<group>"; };
+		C83BE2A4173B89E200B2DE15 /* JOImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOImageCache.m; sourceTree = "<group>"; };
+		C83BE2A5173B89E200B2DE15 /* JOImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOImageLoader.h; sourceTree = "<group>"; };
+		C83BE2A6173B89E200B2DE15 /* JOImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOImageLoader.m; sourceTree = "<group>"; };
+		C83BE2A7173B89E200B2DE15 /* UIImageView+JOAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+JOAdditions.h"; sourceTree = "<group>"; };
+		C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+JOAdditions.m"; sourceTree = "<group>"; };
 		C8FFBDEE173A2FE4003371E8 /* DemoImageLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoImageLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8FFBDF1173A2FE4003371E8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C8FFBDF3173A2FE4003371E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -51,12 +57,6 @@
 		C8FFBE14173A2FE4003371E8 /* JOSecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JOSecondViewController.m; sourceTree = "<group>"; };
 		C8FFBE16173A2FE4003371E8 /* second.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = second.png; sourceTree = "<group>"; };
 		C8FFBE18173A2FE4003371E8 /* second@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "second@2x.png"; sourceTree = "<group>"; };
-		C8FFBE20173A30E0003371E8 /* JOImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOImageCache.h; sourceTree = "<group>"; };
-		C8FFBE21173A30E0003371E8 /* JOImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOImageCache.m; sourceTree = "<group>"; };
-		C8FFBE22173A30E0003371E8 /* JOImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOImageLoader.h; sourceTree = "<group>"; };
-		C8FFBE23173A30E0003371E8 /* JOImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOImageLoader.m; sourceTree = "<group>"; };
-		C8FFBE24173A30E0003371E8 /* UIImageView+JOAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+JOAdditions.h"; sourceTree = "<group>"; };
-		C8FFBE25173A30E0003371E8 /* UIImageView+JOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+JOAdditions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +73,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C83BE2A2173B89E200B2DE15 /* JOImageLoader */ = {
+			isa = PBXGroup;
+			children = (
+				C83BE2A3173B89E200B2DE15 /* JOImageCache.h */,
+				C83BE2A4173B89E200B2DE15 /* JOImageCache.m */,
+				C83BE2A5173B89E200B2DE15 /* JOImageLoader.h */,
+				C83BE2A6173B89E200B2DE15 /* JOImageLoader.m */,
+				C83BE2A7173B89E200B2DE15 /* UIImageView+JOAdditions.h */,
+				C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */,
+			);
+			path = JOImageLoader;
+			sourceTree = SOURCE_ROOT;
+		};
 		C8FFBDE5173A2FE4003371E8 = {
 			isa = PBXGroup;
 			children = (
@@ -103,8 +116,8 @@
 		C8FFBDF7173A2FE4003371E8 /* DemoImageLoader */ = {
 			isa = PBXGroup;
 			children = (
+				C83BE2A2173B89E200B2DE15 /* JOImageLoader */,
 				C8FFBE00173A2FE4003371E8 /* JOAppDelegate.h */,
-				C8FFBE1F173A30E0003371E8 /* JOImageLoader */,
 				C8FFBE01173A2FE4003371E8 /* JOAppDelegate.m */,
 				C8FFBE09173A2FE4003371E8 /* MainStoryboard.storyboard */,
 				C8FFBE0C173A2FE4003371E8 /* JOFirstViewController.h */,
@@ -132,19 +145,6 @@
 				C8FFBE07173A2FE4003371E8 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		C8FFBE1F173A30E0003371E8 /* JOImageLoader */ = {
-			isa = PBXGroup;
-			children = (
-				C8FFBE20173A30E0003371E8 /* JOImageCache.h */,
-				C8FFBE21173A30E0003371E8 /* JOImageCache.m */,
-				C8FFBE22173A30E0003371E8 /* JOImageLoader.h */,
-				C8FFBE23173A30E0003371E8 /* JOImageLoader.m */,
-				C8FFBE24173A30E0003371E8 /* UIImageView+JOAdditions.h */,
-				C8FFBE25173A30E0003371E8 /* UIImageView+JOAdditions.m */,
-			);
-			path = JOImageLoader;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -222,9 +222,9 @@
 				C8FFBE02173A2FE4003371E8 /* JOAppDelegate.m in Sources */,
 				C8FFBE0E173A2FE4003371E8 /* JOFirstViewController.m in Sources */,
 				C8FFBE15173A2FE4003371E8 /* JOSecondViewController.m in Sources */,
-				C8FFBE26173A30E0003371E8 /* JOImageCache.m in Sources */,
-				C8FFBE27173A30E0003371E8 /* JOImageLoader.m in Sources */,
-				C8FFBE28173A30E0003371E8 /* UIImageView+JOAdditions.m in Sources */,
+				C83BE2A9173B89E200B2DE15 /* JOImageCache.m in Sources */,
+				C83BE2AA173B89E200B2DE15 /* JOImageLoader.m in Sources */,
+				C83BE2AB173B89E200B2DE15 /* UIImageView+JOAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,6 +347,7 @@
 				C8FFBE1E173A2FE4003371E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
