@@ -11,7 +11,9 @@ typedef void (^JOImageResponseBlock)(UIImage * image, NSString * urlString) ;
 typedef void (^JOImageErrorBlock)(NSString* urlString, NSError * err) ;
 
 #pragma mark
+@class JOImageCache;
 @interface JOImageLoader : NSObject
+@property (nonatomic,strong,readonly) JOImageCache * cache;
 - (BOOL)loadImageWithUrl:(NSString *) urlStr onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed;
 @end
 

@@ -50,7 +50,7 @@
             _order = [NSMutableArray arrayWithCapacity:40];
             
         }
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(save:) name:UIApplicationDidEnterBackgroundNotification object:self];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(save:) name:UIApplicationDidEnterBackgroundNotification object:self];
     }
     return self;
 }
@@ -82,12 +82,12 @@
         return YES;
     }
 }
-- (void)cacheData:(UIImage *) data forKey:(id)key
+- (void)cacheData:(UIImage *) data forKey:(id)key size:(size_t) datalength
 {
     CLCache * cache  = [[CLCache alloc] init];
     cache.key = key;
     cache.image = data;
-    cache.size = 4*data.size.width*data.size.height;
+    cache.size = datalength;
     cache.inMemory = YES;
     cache.lastUsed = [[NSDate date] timeIntervalSince1970];
     _totalBytes+=cache.size;
@@ -118,11 +118,13 @@
 }
 - (void)moveToDisk:(CLCache *)cache
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        //the block
         NSData * data = UIImagePNGRepresentation(cache.image);
         [data writeToFile:[self cachePathForKey:cache.key] atomically:YES];
         dispatch_async(dispatch_get_main_queue(), ^{
             [_objects removeObjectForKey: cache.key];
+            _totalBytes -= data.length;
             cache.image = nil;
         });
     });
@@ -131,9 +133,9 @@
 }
 - (void)save:(NSNotification*) noti
 {
-    for (CLCache * cache in _objects)
+    for (NSString  * key in _objects)
     {
-        [self moveToDisk: cache];
+        [self moveToDisk: _objects[key]];
     }
     NSString * cachePlist = [_cachePath stringByAppendingPathComponent:@"jocache"];
     [_order writeToFile: cachePlist atomically:YES];

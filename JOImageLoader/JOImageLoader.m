@@ -12,7 +12,7 @@
 #pragma mark JOImageLoader Private Methods
 @interface JOImageLoader(/*Private Methods*/)
 @property (nonatomic,strong) NSMutableDictionary * requestMap;
-@property (nonatomic,strong) JOImageCache * cache;
+
 @end
 
 #pragma mark JOImageLoader implementation
@@ -50,7 +50,7 @@
                     {
                         t(img,request.urlString);
                     }
-                    [_cache cacheData: img forKey:request.urlString];
+                    [_cache cacheData: img forKey:request.urlString size: data.length];
                     [_requestMap removeObjectForKey:request.urlString];
                 });
             } onFail:^(NSError *err, JOImageRequest *request) {
