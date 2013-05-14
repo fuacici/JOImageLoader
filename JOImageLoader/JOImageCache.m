@@ -67,17 +67,19 @@
         return YES;
     }else
     {
-        dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             CLCache * loadedCache = [self loadCacheToMemWithKey:key];
-            if (loadedCache.image)
-            {
-                succeed(loadedCache.image,key);
-            }else
-            {
-                failed(key,nil);
-            }
-            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (loadedCache.image)
+                {
+                    succeed(loadedCache.image,key);
+                }else
+                {
+                    failed(key,nil);
+                }
+            });
         });
+        
        
         return YES;
     }

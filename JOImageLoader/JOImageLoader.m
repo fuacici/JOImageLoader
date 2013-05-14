@@ -44,15 +44,18 @@
         if (!request)
         {
             request = [JOImageRequest requestWithUrlString:urlStr onSuccess:^(NSData *data, JOImageRequest *request) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                     UIImage * img = [UIImage imageWithData: data];
-                    for (JOImageResponseBlock t in request.callbacks)
-                    {
-                        t(img,request.urlString);
-                    }
-                    [_cache cacheData: img forKey:request.urlString size: data.length];
-                    [_requestMap removeObjectForKey:request.urlString];
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        for (JOImageResponseBlock t in request.callbacks)
+                        {
+                            t(img,request.urlString);
+                        }
+                        [_cache cacheData: img forKey:request.urlString size: data.length];
+                        [_requestMap removeObjectForKey:request.urlString];
+                    });
                 });
+                
             } onFail:^(NSError *err, JOImageRequest *request) {
                 for (JOImageResponseBlock t in request.callbacks)
                 {
