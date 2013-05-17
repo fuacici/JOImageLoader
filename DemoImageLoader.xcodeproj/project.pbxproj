@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C80E6C8817464172006D3AE8 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C80E6C8717464171006D3AE8 /* ImageIO.framework */; };
 		C83BE2A9173B89E200B2DE15 /* JOImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A4173B89E200B2DE15 /* JOImageCache.m */; };
 		C83BE2AA173B89E200B2DE15 /* JOImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A6173B89E200B2DE15 /* JOImageLoader.m */; };
 		C83BE2AB173B89E200B2DE15 /* UIImageView+JOAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C80E6C8717464171006D3AE8 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		C83BE2A3173B89E200B2DE15 /* JOImageCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOImageCache.h; sourceTree = "<group>"; };
 		C83BE2A4173B89E200B2DE15 /* JOImageCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOImageCache.m; sourceTree = "<group>"; };
 		C83BE2A5173B89E200B2DE15 /* JOImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOImageLoader.h; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C80E6C8817464172006D3AE8 /* ImageIO.framework in Frameworks */,
 				C8FFBDF2173A2FE4003371E8 /* UIKit.framework in Frameworks */,
 				C8FFBDF4173A2FE4003371E8 /* Foundation.framework in Frameworks */,
 				C8FFBDF6173A2FE4003371E8 /* CoreGraphics.framework in Frameworks */,
@@ -89,6 +92,7 @@
 		C8FFBDE5173A2FE4003371E8 = {
 			isa = PBXGroup;
 			children = (
+				C80E6C8717464171006D3AE8 /* ImageIO.framework */,
 				C8FFBDF7173A2FE4003371E8 /* DemoImageLoader */,
 				C8FFBDF0173A2FE4003371E8 /* Frameworks */,
 				C8FFBDEF173A2FE4003371E8 /* Products */,
@@ -312,6 +316,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DemoImageLoader/DemoImageLoader-Prefix.pch";
 				INFOPLIST_FILE = "DemoImageLoader/DemoImageLoader-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -323,6 +328,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DemoImageLoader/DemoImageLoader-Prefix.pch";
 				INFOPLIST_FILE = "DemoImageLoader/DemoImageLoader-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
