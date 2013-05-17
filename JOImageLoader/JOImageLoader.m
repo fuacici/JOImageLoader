@@ -8,13 +8,17 @@
 
 #import "JOImageLoader.h"
 #import "JOImageCache.h"
+#import <ImageIO/ImageIO.h>
 
 #pragma mark JOImageLoader Private Methods
 @interface JOImageLoader(/*Private Methods*/)
+{
+    dispatch_queue_t net_work_queue;
+}
 @property (nonatomic,strong) NSMutableDictionary * requestMap;
 
 @end
-
+static const char * sNetQueueName ="jo_image_loader_queue";
 #pragma mark JOImageLoader implementation
 @implementation JOImageLoader
 - (id)init
@@ -23,16 +27,25 @@
     if (self) {
         _requestMap = [NSMutableDictionary dictionaryWithCapacity:30];
         _cache = [[JOImageCache alloc] init];
+        net_work_queue = dispatch_queue_create(sNetQueueName, DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
-- (BOOL)loadImageWithUrl:(NSString *) urlStr onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
+- (void)dealloc
 {
-    BOOL hasCache = [_cache hasCacheForKey:urlStr];
+    if (net_work_queue)
+    {
+        dispatch_release( net_work_queue);
+        net_work_queue = NULL;
+    }
+}
+- (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
+{
+    BOOL hasCache = [_cache hasCacheForUrl:urlStr maxSize:maxsize];
     if (hasCache)
     {
         //load cache
-        [_cache loadCachedDataForKey:urlStr onSuccess:^(UIImage *image, NSString *urlString) {
+        [_cache loadCachedImageForUrl:urlStr maxSize: maxsize  onSuccess:^(UIImage *image, NSString *urlString) {
             succeed(image,urlString);
         } onFail:^(NSString *urlString, NSError * err) {
             failed(urlString,err);
@@ -40,30 +53,46 @@
     }else
     {
         //query if there's a request
-        JOImageRequest * request = _requestMap[urlStr];
+        NSString * key = [NSString stringWithFormat:@"%@_%d",urlStr,maxsize];
+        JOImageRequest * request = _requestMap[key];
         if (!request)
-        {
+        {            
             request = [JOImageRequest requestWithUrlString:urlStr onSuccess:^(NSData *data, JOImageRequest *request) {
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    UIImage * img = [UIImage imageWithData: data];
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        for (JOImageResponseBlock t in request.callbacks)
-                        {
-                            t(img,request.urlString);
-                        }
-                        [_cache cacheData: img forKey:request.urlString size: data.length];
-                        [_requestMap removeObjectForKey:request.urlString];
-                    });
+                UIImage *img = nil;
+                if (maxsize<1)
+                {
+                    img = [UIImage imageWithData: data];
+                }else
+                {
+                    NSDictionary * opts = @{(__bridge id)kCGImageSourceThumbnailMaxPixelSize:@(maxsize),(__bridge id)kCGImageSourceCreateThumbnailFromImageIfAbsent:(id)kCFBooleanTrue};
+                    CGImageSourceRef cgimagesrc = CGImageSourceCreateWithData((__bridge CFDataRef)(data),NULL);
+                    CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
+                    img = [UIImage imageWithCGImage:cgimg];
+                    CGImageRelease(cgimg);
+                    CFRelease(cgimagesrc);
+                }          
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    for (JOImageResponseBlock t in request.callbacks)
+                    {
+                        t(img,request.urlString);
+                    }
+                    [_cache cacheImage: img forUrl: request.urlString maxSize: maxsize ];
+                    [_requestMap removeObjectForKey:request.urlString];
                 });
-                
+
             } onFail:^(NSError *err, JOImageRequest *request) {
                 for (JOImageResponseBlock t in request.callbacks)
                 {
                     t(nil,request.urlString);
                 }
-                [_requestMap removeObjectForKey:request.urlString];
+                [_requestMap removeObjectForKey:key];
             }];
-            _requestMap[ urlStr] = request;
+            _requestMap[ key] = request;
+            dispatch_async(net_work_queue, ^{
+                [request load];
+            });
+            
+            
         }
         [request.callbacks addObject: succeed];
     }
@@ -81,32 +110,36 @@
 @implementation JOImageRequest
 + (id)requestWithUrlString:(NSString *) urlStr onSuccess:(JOResponseBlock) succeed onFail:(JOErrorResponseBlock) failed
 {
-    JOImageRequest * r = [[JOImageRequest alloc] init];
+    JOImageRequest * r = [[JOImageRequest alloc] initWithUrlString:urlStr];
     r.succeed = succeed;
     r.failed = failed;
-    [r loadUrlString: urlStr];
     return r;
 }
-- (id)init
+- (id)initWithUrlString:(NSString *) urlstr
 {
     self = [super init];
     if (self) {
         _callbacks=[NSMutableArray arrayWithCapacity:5];
-        
+        _urlString = urlstr;
     }
     return self;
 }
-- (void)loadUrlString:(NSString *) urlstr
+- (void)load
 {
-    NSAssert([NSThread isMainThread], @"Must Be Called in Main Thread!");
     [_connection cancel];
-    _request = nil;
-    _data  = nil;
-    
-    _urlString = urlstr;
     _request = [NSURLRequest requestWithURL:[NSURL URLWithString: _urlString]];
-    _connection = [NSURLConnection connectionWithRequest:_request delegate:self];
+//    _connection = [NSURLConnection connectionWithRequest:_request delegate:self];
+    NSError * err = NULL;
+    NSData * tdata = [NSURLConnection sendSynchronousRequest:_request returningResponse:NULL error: &err];
+    if (tdata)
+    {
+        _succeed(tdata,self);
+    }else
+    {
+        _failed(err,self);
+    }
 }
+/*
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     
@@ -128,7 +161,7 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     _failed(error,self);
-}
+}*/
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response
 {
     return request;

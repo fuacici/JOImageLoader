@@ -15,7 +15,7 @@
 @property (nonatomic)   int hit;
 @property (nonatomic,strong)   id key;
 @property (nonatomic,strong)  UIImage * image;
-@property (nonatomic)  BOOL inMemory;
+@property (nonatomic)  BOOL onDisk;
 
 @end
 /**/
@@ -24,7 +24,11 @@
 @end
 
 #pragma mark --
+static const char * sFileQueueName = "joimage_file_queue";
 @interface JOImageCache(/*Private Methods*/)
+{
+    dispatch_queue_t _file_queue;
+}
 @property (nonatomic,strong) NSMutableDictionary * objects;
 @property (nonatomic,strong) NSMutableArray * order;
 @property (nonatomic) size_t totalBytes;
@@ -37,7 +41,7 @@
     if (self)
     {
         _objects = [NSMutableDictionary dictionaryWithCapacity:40];
-        _maxBytesInMemory = 5*1024*1024;
+        _maxBytesInMemory = 2*1024*1024;
         _totalBytes = 0;
         _cachePath =  NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES)[0];
         NSFileManager * filer = [NSFileManager defaultManager];
@@ -50,58 +54,83 @@
             _order = [NSMutableArray arrayWithCapacity:40];
             
         }
-//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(save:) name:UIApplicationDidEnterBackgroundNotification object:self];
+        _file_queue = dispatch_queue_create(sFileQueueName, DISPATCH_QUEUE_CONCURRENT);
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(save:) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
     }
     return self;
 }
-- (BOOL)hasCacheForKey:(id)key 
+- (BOOL)hasCacheForUrl:(NSString *)url maxSize:(NSInteger) size
 {
+    NSString * key = [NSString stringWithFormat:@"%@_%d",url,size];
     return [_order containsObject:key];
 }
--( BOOL) loadCachedDataForKey:(id)key onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed;
+-( BOOL) loadCachedImageForUrl:(NSString *)url maxSize:(NSInteger) size onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
+    NSString * key = [NSString stringWithFormat:@"%@_%d",url,size];
     CLCache * t = _objects[key];
-    if (t&&t.inMemory)
+    if (t.image)
     {
-        succeed(t.image,key);
+        t.lastUsed = [[NSDate date] timeIntervalSince1970];
+        succeed(t.image,url);
         return YES;
     }else
     {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            CLCache * loadedCache = [self loadCacheToMemWithKey:key];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (loadedCache.image)
-                {
-                    succeed(loadedCache.image,key);
-                }else
-                {
-                    failed(key,nil);
-                }
-            });
+
+        dispatch_async(_file_queue, ^{
+            CLCache * loadedCache = [self loadCacheToMemWithKey: key];
+            if (loadedCache)
+            {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    _objects[key] = loadedCache;
+                    if (_totalBytes>_maxBytesInMemory)
+                    {
+                        [self evictLRU];
+                    }
+                    if (loadedCache.image)
+                    {
+                        succeed(loadedCache.image,url);
+                    }else
+                    {
+                        failed(key,nil);
+                    }
+                });
+            }
         });
         
        
         return YES;
     }
 }
-- (void)cacheData:(UIImage *) data forKey:(id)key size:(size_t) datalength
+- (void)evictLRU
 {
-    CLCache * cache  = [[CLCache alloc] init];
-    cache.key = key;
-    cache.image = data;
-    cache.size = datalength;
-    cache.inMemory = YES;
-    cache.lastUsed = [[NSDate date] timeIntervalSince1970];
-    _totalBytes+=cache.size;
-    _objects[key] = cache;
-    [_order addObject: key];
-    if (_totalBytes> _maxBytesInMemory)
+    NSArray * sorted = [[_objects allValues] sortedArrayUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"lastUsed" ascending:YES]]];
+    CLCache * t =sorted[0];
+    dispatch_async(dispatch_get_main_queue(), ^{
+         [_objects removeObjectForKey:t.key];
+    });
+    if (NO == t.onDisk)
     {
-        CLCache * t =[_objects objectForKey: [_objects allKeys][0] ];
         [self moveToDisk: t];
     }
+   
 }
-- (CLCache *)loadCacheToMemWithKey:(id)key
+- (void)cacheImage:(UIImage *) data forUrl:(NSString *)url maxSize:(NSInteger) imgSize
+{
+    CLCache * cache  = [[CLCache alloc] init];
+    cache.key = [NSString stringWithFormat:@"%@_%d",url,imgSize];
+    cache.image = data;
+    cache.size = data.size.height*data.size.width*4;
+    cache.onDisk = NO;
+    cache.lastUsed = [[NSDate date] timeIntervalSince1970];
+    _totalBytes+=cache.size;
+    _objects[cache.key] = cache;
+    [_order addObject: cache.key];
+    if (_totalBytes> _maxBytesInMemory)
+    {
+        [self evictLRU];
+    }
+}
+- (CLCache *)loadCacheToMemWithKey:(NSString *)key
 {
     NSData * data = [NSData dataWithContentsOfFile:[self cachePathForKey:key]];
     if (!data)
@@ -112,25 +141,26 @@
     CLCache * cache = [[CLCache alloc] init];
     cache.key = key;
     cache.image = [UIImage imageWithData: data];
-    cache.inMemory = YES;
-    cache.size = data.length;
+    cache.onDisk = YES;
+    cache.size = cache.image.size.width * cache.image.size.height *4;
+    cache.lastUsed = [[NSDate date] timeIntervalSince1970];
     _totalBytes+= cache.size;
-    _objects[key] = cache;
     return cache;
 }
 - (void)moveToDisk:(CLCache *)cache
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        //the block
         NSData * data = UIImagePNGRepresentation(cache.image);
-        [data writeToFile:[self cachePathForKey:cache.key] atomically:YES];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_objects removeObjectForKey: cache.key];
-            _totalBytes -= data.length;
-            cache.image = nil;
+        dispatch_async(_file_queue, ^{
+            //the block
+            [data writeToFile:[self cachePathForKey:cache.key] atomically:YES];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_objects removeObjectForKey: cache.key];
+                _totalBytes -= cache.size;
+                cache.image = nil;
+            });
         });
     });
-    
     
 }
 - (void)save:(NSNotification*) noti
@@ -146,5 +176,14 @@
 {
     NSString * t = [self.cachePath stringByAppendingPathComponent:[NSString stringWithFormat:@"%d", [key hash]]];
     return t;
+}
+- (void)dealloc
+{
+    if (_file_queue)
+    {
+        dispatch_release(_file_queue);
+        _file_queue = nil;
+    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end

@@ -14,7 +14,7 @@ typedef void (^JOImageErrorBlock)(NSString* urlString, NSError * err) ;
 @class JOImageCache;
 @interface JOImageLoader : NSObject
 @property (nonatomic,strong,readonly) JOImageCache * cache;
-- (BOOL)loadImageWithUrl:(NSString *) urlStr onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed;
+- (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed;
 @end
 
 #pragma mark -
@@ -28,5 +28,6 @@ typedef void (^JOErrorResponseBlock)(NSError * err , JOImageRequest * request);
 @property (nonatomic,readonly) NSString * urlString;
 @property (nonatomic,readonly) NSMutableArray  * callbacks;
 @property (nonatomic,readonly) NSMutableData * data;
+- (void)load;
 + (id)requestWithUrlString:(NSString *) urlStr onSuccess:(JOResponseBlock) succeed onFail:(JOErrorResponseBlock) failed;
 @end

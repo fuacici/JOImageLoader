@@ -22,9 +22,9 @@ static char imageUrlKey = '\0';
 
 - (id)setImageWithUrlString:(NSString *) urlstring
 {
-   return  [self setImageWithUrlString: urlstring placeHolder:nil animate:NO indicator:NO];
+    return  [self setImageWithUrlString: urlstring maxSize: self.bounds.size.width placeHolder:nil animate:NO indicator:NO];
 }
-- (id)setImageWithUrlString:(NSString *) str placeHolder:(UIImage *) placeholder animate:(BOOL) animate  indicator:(BOOL) useIndicator
+- (id)setImageWithUrlString:(NSString *) str maxSize:(NSInteger) maxsize placeHolder:(UIImage *) placeholder animate:(BOOL) animate  indicator:(BOOL) useIndicator
 {
     if (!str)
     {
@@ -42,9 +42,11 @@ static char imageUrlKey = '\0';
     {
             [self.indicator startAnimating];
     }
-    [imageLoader loadImageWithUrl: str onSuccess:^(UIImage *image, NSString *urlString) {
+    //self.bounds.size.height*2
+    [imageLoader loadImageWithUrl: str maxSize: maxsize onSuccess:^(UIImage *image, NSString *urlString) {
         if ([urlString isEqualToString: self.urlString])
         {
+            //downsample image
             self.image = image;
             if (useIndicator)
             {
