@@ -46,7 +46,7 @@ static char imageUrlKey = '\0';
     [imageLoader loadImageWithUrl: str maxSize: maxsize onSuccess:^(UIImage *image, NSString *urlString) {
         if ([urlString isEqualToString: self.urlString])
         {
-            //downsample image
+            //downsampled image
             self.image = image;
             if (useIndicator)
             {

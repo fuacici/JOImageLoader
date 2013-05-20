@@ -12,13 +12,9 @@
 
 #pragma mark JOImageLoader Private Methods
 @interface JOImageLoader(/*Private Methods*/)
-{
-    dispatch_queue_t net_work_queue;
-}
 @property (nonatomic,strong) NSMutableDictionary * requestMap;
 
 @end
-static const char * sNetQueueName ="jo_image_loader_queue";
 #pragma mark JOImageLoader implementation
 @implementation JOImageLoader
 - (id)init
@@ -27,17 +23,13 @@ static const char * sNetQueueName ="jo_image_loader_queue";
     if (self) {
         _requestMap = [NSMutableDictionary dictionaryWithCapacity:30];
         _cache = [[JOImageCache alloc] init];
-        net_work_queue = dispatch_queue_create(sNetQueueName, DISPATCH_QUEUE_SERIAL);
+//        net_work_queue = dispatch_queue_create(sNetQueueName, DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
 - (void)dealloc
 {
-    if (net_work_queue)
-    {
-        dispatch_release( net_work_queue);
-        net_work_queue = NULL;
-    }
+    
 }
 - (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
@@ -88,11 +80,7 @@ static const char * sNetQueueName ="jo_image_loader_queue";
                 [_requestMap removeObjectForKey:key];
             }];
             _requestMap[ key] = request;
-            dispatch_async(net_work_queue, ^{
-                [request load];
-            });
-            
-            
+            [request load];            
         }
         [request.callbacks addObject: succeed];
     }
@@ -128,18 +116,9 @@ static const char * sNetQueueName ="jo_image_loader_queue";
 {
     [_connection cancel];
     _request = [NSURLRequest requestWithURL:[NSURL URLWithString: _urlString]];
-//    _connection = [NSURLConnection connectionWithRequest:_request delegate:self];
-    NSError * err = NULL;
-    NSData * tdata = [NSURLConnection sendSynchronousRequest:_request returningResponse:NULL error: &err];
-    if (tdata)
-    {
-        _succeed(tdata,self);
-    }else
-    {
-        _failed(err,self);
-    }
+    _connection = [NSURLConnection connectionWithRequest:_request delegate:self];
 }
-/*
+
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     
@@ -161,7 +140,7 @@ static const char * sNetQueueName ="jo_image_loader_queue";
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     _failed(error,self);
-}*/
+}
 - (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response
 {
     return request;

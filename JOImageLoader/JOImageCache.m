@@ -54,7 +54,7 @@ static const char * sFileQueueName = "joimage_file_queue";
             _order = [NSMutableArray arrayWithCapacity:40];
             
         }
-        _file_queue = dispatch_queue_create(sFileQueueName, DISPATCH_QUEUE_CONCURRENT);
+        _file_queue = dispatch_queue_create(sFileQueueName, DISPATCH_QUEUE_SERIAL);
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(save:) name:UIApplicationDidReceiveMemoryWarningNotification object:self];
     }
     return self;
