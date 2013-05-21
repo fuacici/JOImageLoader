@@ -50,28 +50,31 @@
         if (!request)
         {            
             request = [JOImageRequest requestWithUrlString:urlStr onSuccess:^(NSData *data, JOImageRequest *request) {
-                UIImage *img = nil;
-                if (maxsize<1)
-                {
-                    img = [UIImage imageWithData: data];
-                }else
-                {
-                    NSDictionary * opts = @{(__bridge id)kCGImageSourceThumbnailMaxPixelSize:@(maxsize),(__bridge id)kCGImageSourceCreateThumbnailFromImageIfAbsent:(id)kCFBooleanTrue};
-                    CGImageSourceRef cgimagesrc = CGImageSourceCreateWithData((__bridge CFDataRef)(data),NULL);
-                    CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
-                    img = [UIImage imageWithCGImage:cgimg];
-                    CGImageRelease(cgimg);
-                    CFRelease(cgimagesrc);
-                }          
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    for (JOImageResponseBlock t in request.callbacks)
+                    UIImage *img = nil;
+                    if (maxsize<1)
                     {
-                        t(img,request.urlString);
+                        img = [UIImage imageWithData: data];
+                    }else
+                    {
+                        NSDictionary * opts = @{(__bridge id)kCGImageSourceThumbnailMaxPixelSize:@(maxsize),(__bridge id)kCGImageSourceCreateThumbnailFromImageIfAbsent:(id)kCFBooleanTrue};
+                        CGImageSourceRef cgimagesrc = CGImageSourceCreateWithData((__bridge CFDataRef)(data),NULL);
+                        CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
+                        img = [UIImage imageWithCGImage:cgimg];
+                        CGImageRelease(cgimg);
+                        CFRelease(cgimagesrc);
                     }
-                    [_cache cacheImage: img forUrl: request.urlString maxSize: maxsize ];
-                    [_requestMap removeObjectForKey:request.urlString];
+                    //notify callbacks
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        for (JOImageResponseBlock t in request.callbacks)
+                        {
+                            t(img,request.urlString);
+                        }
+                        [_cache cacheImage: img forUrl: request.urlString maxSize: maxsize ];
+                        [_requestMap removeObjectForKey:request.urlString];
+                    });
                 });
-
+                
             } onFail:^(NSError *err, JOImageRequest *request) {
                 for (JOImageResponseBlock t in request.callbacks)
                 {
