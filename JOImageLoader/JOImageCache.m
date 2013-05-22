@@ -149,9 +149,8 @@ static const char * sFileQueueName = "joimage_file_queue";
 }
 - (void)moveToDisk:(CLCache *)cache
 {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSData * data = UIImagePNGRepresentation(cache.image);
         dispatch_async(_file_queue, ^{
+            NSData * data = UIImagePNGRepresentation(cache.image);
             //the block
             [data writeToFile:[self cachePathForKey:cache.key] atomically:YES];
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -160,8 +159,6 @@ static const char * sFileQueueName = "joimage_file_queue";
                 cache.image = nil;
             });
         });
-    });
-    
 }
 - (void)save:(NSNotification*) noti
 {

@@ -71,7 +71,7 @@
                             t(img,request.urlString);
                         }
                         [_cache cacheImage: img forUrl: request.urlString maxSize: maxsize ];
-                        [_requestMap removeObjectForKey:request.urlString];
+                        [_requestMap removeObjectForKey:key];
                     });
                 });
                 
