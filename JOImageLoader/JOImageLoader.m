@@ -59,7 +59,7 @@ static char * const sImageQueueName = "jo_image_process_queue";
         {            
             request = [JOImageRequest requestWithUrlString:urlStr onSuccess:^(NSData *data, JOImageRequest *request) {
                 dispatch_async(image_process_queue, ^{
-                    UIImage *img = nil;
+                     UIImage *img = nil;
                     if (maxsize< 1 )
                     {
                         img = [[UIImage alloc] initWithData:data];
