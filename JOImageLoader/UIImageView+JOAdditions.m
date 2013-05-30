@@ -9,6 +9,7 @@
 #import "UIImageView+JOAdditions.h"
 #import <objc/runtime.h>
 #import "JOImageLoader.h"
+#import <QuartzCore/QuartzCore.h>
 static JOImageLoader * imageLoader =nil;
 static char imageUrlKey = '\0';
 
@@ -26,17 +27,20 @@ static char imageUrlKey = '\0';
 }
 - (id)setImageWithUrlString:(NSString *) str maxSize:(NSInteger) maxsize placeHolder:(UIImage *) placeholder animate:(BOOL) animate  indicator:(BOOL) useIndicator
 {
-    if (!str)
-    {
-        self.urlString = nil;
-        return nil;
-    }
+    
     if ([str isEqualToString: self.urlString])
     {
         return nil;
     }
+    
      self.image = placeholder;
     self.urlString = str;
+    if (!self.urlString)
+    {
+        return nil;
+    }
+//#pragma warning - no image set!!
+//    return nil;
     NSAssert(imageLoader!= nil, @"Must have set a Image Loader");
     if (useIndicator)
     {
@@ -48,6 +52,13 @@ static char imageUrlKey = '\0';
         {
             //downsampled image
             self.image = image;
+            if (animate)
+            {
+                CATransition * transition = [CATransition animation];
+                transition.type = kCATransitionFade;
+                transition.duration = 0.2;
+                [self.layer addAnimation: transition forKey:@"transition"];
+            }
             if (useIndicator)
             {
                 [self.indicator stopAnimating];
@@ -58,7 +69,6 @@ static char imageUrlKey = '\0';
     } onFail:^(NSString *urlString, NSError *err) {
         if ([urlString isEqualToString: self.urlString])
         {
-            self.image = nil;
             if (useIndicator)
             {
                 [self.indicator stopAnimating];

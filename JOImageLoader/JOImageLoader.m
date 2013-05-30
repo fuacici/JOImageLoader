@@ -12,9 +12,13 @@
 
 #pragma mark JOImageLoader Private Methods
 @interface JOImageLoader(/*Private Methods*/)
+{
+    dispatch_queue_t image_process_queue;
+}
 @property (nonatomic,strong) NSMutableDictionary * requestMap;
 
 @end
+static char * const sImageQueueName = "jo_image_process_queue";
 #pragma mark JOImageLoader implementation
 @implementation JOImageLoader
 - (id)init
@@ -23,13 +27,17 @@
     if (self) {
         _requestMap = [NSMutableDictionary dictionaryWithCapacity:30];
         _cache = [[JOImageCache alloc] init];
-//        net_work_queue = dispatch_queue_create(sNetQueueName, DISPATCH_QUEUE_SERIAL);
+        image_process_queue = dispatch_queue_create(sImageQueueName, DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
 - (void)dealloc
 {
-    
+    if (image_process_queue)
+    {
+        dispatch_release(image_process_queue);
+        image_process_queue = 0;
+    }
 }
 - (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
@@ -50,19 +58,26 @@
         if (!request)
         {            
             request = [JOImageRequest requestWithUrlString:urlStr onSuccess:^(NSData *data, JOImageRequest *request) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                dispatch_async(image_process_queue, ^{
                     UIImage *img = nil;
-                    if (maxsize<1)
+                    if (maxsize< 1 )
                     {
-                        img = [UIImage imageWithData: data];
+                        img = [[UIImage alloc] initWithData:data];
                     }else
                     {
                         NSDictionary * opts = @{(__bridge id)kCGImageSourceThumbnailMaxPixelSize:@(maxsize),(__bridge id)kCGImageSourceCreateThumbnailFromImageIfAbsent:(id)kCFBooleanTrue};
                         CGImageSourceRef cgimagesrc = CGImageSourceCreateWithData((__bridge CFDataRef)(data),NULL);
-                        CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
-                        img = [UIImage imageWithCGImage:cgimg];
-                        CGImageRelease(cgimg);
-                        CFRelease(cgimagesrc);
+                        
+                        if (cgimagesrc)
+                        {
+                            CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
+                            if (cgimg)
+                            {
+                                img = [[UIImage alloc] initWithCGImage:cgimg];
+                                CGImageRelease(cgimg);
+                            }
+                            CFRelease(cgimagesrc);
+                        }
                     }
                     //notify callbacks
                     dispatch_async(dispatch_get_main_queue(), ^{
@@ -86,6 +101,7 @@
             [request load];            
         }
         [request.callbacks addObject: succeed];
+        request = nil;
     }
     return YES;
 }

@@ -16,12 +16,41 @@
 @property (nonatomic,strong)   id key;
 @property (nonatomic,strong)  UIImage * image;
 @property (nonatomic)  BOOL onDisk;
+@property (nonatomic,strong)NSString * cacheFile;
 
 @end
 /**/
 @implementation CLCache
-
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    self = [super init];
+    if (self) {
+        _size = [decoder decodeIntegerForKey:@"size"];
+        _lastUsed = [decoder decodeDoubleForKey:@"lastUsed"];
+        _hit = [decoder decodeIntForKey:@"hit"];
+        _key  = [decoder decodeObject];
+        _cacheFile = [decoder decodeObject];
+        _onDisk = YES;
+    }
+    return self;
+}
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeInteger:_size forKey:@"size"];
+    [coder encodeDouble:_lastUsed forKey:@"lastUsed"];
+    [coder encodeInt:_hit forKey:@"hit"];
+    [coder encodeObject:_key];
+    [coder encodeObject:_cacheFile];
+    _image = nil;
+}
 @end
+#if DEBUG
+    #define USE_MEM_CACHE 1
+    #define USE_DISK_CACHE 1
+#else
+    #define USE_MEM_CACHE 1
+    #define USE_DISK_CACHE 1
+#endif
 
 #pragma mark --
 static const char * sFileQueueName = "joimage_file_queue";
@@ -30,7 +59,6 @@ static const char * sFileQueueName = "joimage_file_queue";
     dispatch_queue_t _file_queue;
 }
 @property (nonatomic,strong) NSMutableDictionary * objects;
-@property (nonatomic,strong) NSMutableArray * order;
 @property (nonatomic) size_t totalBytes;
 @end
 /**/
@@ -48,10 +76,10 @@ static const char * sFileQueueName = "joimage_file_queue";
         NSString * cachePlist = [_cachePath stringByAppendingPathComponent:@"jocache"];
         if ([filer fileExistsAtPath: cachePlist])
         {
-            _order = [NSMutableArray arrayWithContentsOfFile:cachePlist];
+            _objects = [NSMutableDictionary dictionaryWithContentsOfFile:cachePlist];
         }else
         {
-            _order = [NSMutableArray arrayWithCapacity:40];
+            _objects = [NSMutableDictionary dictionaryWithCapacity:40];
             
         }
         _file_queue = dispatch_queue_create(sFileQueueName, DISPATCH_QUEUE_SERIAL);
@@ -62,7 +90,7 @@ static const char * sFileQueueName = "joimage_file_queue";
 - (BOOL)hasCacheForUrl:(NSString *)url maxSize:(NSInteger) size
 {
     NSString * key = [NSString stringWithFormat:@"%@_%d",url,size];
-    return [_order containsObject:key];
+    return _objects[key] !=nil ;
 }
 -( BOOL) loadCachedImageForUrl:(NSString *)url maxSize:(NSInteger) size onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
@@ -81,17 +109,20 @@ static const char * sFileQueueName = "joimage_file_queue";
             if (loadedCache)
             {
                 dispatch_async(dispatch_get_main_queue(), ^{
+#if USE_MEM_CACHE
                     _objects[key] = loadedCache;
-                    if (_totalBytes>_maxBytesInMemory)
-                    {
-                        [self evictLRU];
-                    }
+                    _totalBytes += _maxBytesInMemory;
+#endif
                     if (loadedCache.image)
                     {
                         succeed(loadedCache.image,url);
                     }else
                     {
                         failed(key,nil);
+                    }
+                    if (_totalBytes>_maxBytesInMemory)
+                    {
+                        [self evictLRU];
                     }
                 });
             }
@@ -104,61 +135,78 @@ static const char * sFileQueueName = "joimage_file_queue";
 - (void)evictLRU
 {
     NSArray * sorted = [[_objects allValues] sortedArrayUsingDescriptors:@[ [[NSSortDescriptor alloc] initWithKey:@"lastUsed" ascending:YES]]];
-    CLCache * t =sorted[0];
-    dispatch_async(dispatch_get_main_queue(), ^{
-         [_objects removeObjectForKey:t.key];
-    });
-    if (NO == t.onDisk)
+    int i =0;
+    while (i < sorted.count && _totalBytes  > _maxBytesInMemory)
     {
-        [self moveToDisk: t];
+        CLCache * cache = sorted[i];
+        [_objects removeObjectForKey:cache.key];
+        _totalBytes -= cache.size;
+        if (!cache.onDisk)
+        {
+            [self moveToDisk: cache];
+        }
+        i++;
     }
-   
 }
 - (void)cacheImage:(UIImage *) data forUrl:(NSString *)url maxSize:(NSInteger) imgSize
 {
+
     CLCache * cache  = [[CLCache alloc] init];
     cache.key = [NSString stringWithFormat:@"%@_%d",url,imgSize];
     cache.image = data;
     cache.size = data.size.height*data.size.width*4;
     cache.onDisk = NO;
     cache.lastUsed = [[NSDate date] timeIntervalSince1970];
+#if USE_MEM_CACHE
     _totalBytes+=cache.size;
     _objects[cache.key] = cache;
-    [_order addObject: cache.key];
+#endif
     if (_totalBytes> _maxBytesInMemory)
     {
         [self evictLRU];
     }
+
 }
 - (CLCache *)loadCacheToMemWithKey:(NSString *)key
 {
-    NSData * data = [NSData dataWithContentsOfFile:[self cachePathForKey:key]];
+    CLCache * cache = _objects[key];
+    if (!cache)
+    {
+        cache = [[CLCache alloc] init];
+        cache.cacheFile = [self cachePathForKey:key];
+        _objects[key] = cache;
+    }
+    NSData * data = [NSData dataWithContentsOfFile: cache.cacheFile];
     if (!data)
     {
-        [_order removeObject:key];
+        [_objects removeObjectForKey:key];
         return nil;
     }
-    CLCache * cache = [[CLCache alloc] init];
     cache.key = key;
     cache.image = [UIImage imageWithData: data];
     cache.onDisk = YES;
     cache.size = cache.image.size.width * cache.image.size.height *4;
     cache.lastUsed = [[NSDate date] timeIntervalSince1970];
-    _totalBytes+= cache.size;
     return cache;
 }
 - (void)moveToDisk:(CLCache *)cache
 {
+#if USE_DISK_CACHE
         dispatch_async(_file_queue, ^{
             NSData * data = UIImagePNGRepresentation(cache.image);
             //the block
-            [data writeToFile:[self cachePathForKey:cache.key] atomically:YES];
+            if (!cache.cacheFile) {
+                cache.cacheFile =[self cachePathForKey:cache.key];
+            }
+            [data writeToFile:cache.cacheFile atomically:YES];
+#endif
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_objects removeObjectForKey: cache.key];
                 _totalBytes -= cache.size;
                 cache.image = nil;
             });
+#if USE_DISK_CACHE
         });
+#endif
 }
 - (void)save:(NSNotification*) noti
 {
@@ -167,7 +215,8 @@ static const char * sFileQueueName = "joimage_file_queue";
         [self moveToDisk: _objects[key]];
     }
     NSString * cachePlist = [_cachePath stringByAppendingPathComponent:@"jocache"];
-    [_order writeToFile: cachePlist atomically:YES];
+    [_objects writeToFile: cachePlist atomically:YES];
+     
 }
 - (NSString *)cachePathForKey:(NSString *)key
 {
