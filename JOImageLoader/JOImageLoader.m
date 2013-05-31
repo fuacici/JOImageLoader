@@ -41,7 +41,7 @@ static char * const sImageQueueName = "jo_image_process_queue";
 }
 - (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
-    BOOL hasCache = [_cache hasCacheForUrl:urlStr maxSize:maxsize];
+    BOOL hasCache = [_cache hasCacheForUrl:urlStr];
     if (hasCache)
     {
         //load cache
@@ -85,7 +85,7 @@ static char * const sImageQueueName = "jo_image_process_queue";
                         {
                             t(img,request.urlString);
                         }
-                        [_cache cacheImage: img forUrl: request.urlString maxSize: maxsize ];
+                        [_cache cacheImage: data forUrl: request.urlString];
                         [_requestMap removeObjectForKey:key];
                     });
                 });

@@ -89,16 +89,15 @@ static const char * sFileQueueName = "joimage_file_queue";
     }
     return self;
 }
-- (BOOL)hasCacheForUrl:(NSString *)url maxSize:(NSInteger) size
+- (BOOL)hasCacheForUrl:(NSString *)url
 {
-    NSString * key = [NSString stringWithFormat:@"%@_%d",url,size];
-    return _objects[key] !=nil ;
+    return _objects[url] !=nil ;
 }
 -( BOOL) loadCachedImageForUrl:(NSString *)url maxSize:(NSInteger) size onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
     NSString * key = [NSString stringWithFormat:@"%@_%d",url,size];
     dispatch_async(_file_queue, ^{
-        UIImage * image = [self loadCacheWithKey: key];
+        UIImage * image = [self loadCacheWithKey: key size:size];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (image)
             {
@@ -139,12 +138,12 @@ static const char * sFileQueueName = "joimage_file_queue";
         i++;
     }
 }*/
-- (void)cacheImage:(UIImage *) data forUrl:(NSString *)url maxSize:(NSInteger) imgSize
+- (void)cacheImage:(NSData *) data forUrl:(NSString *)url
 {
 
     CLCache * cache  = [[CLCache alloc] init];
-    cache.key = [NSString stringWithFormat:@"%@_%d",url,imgSize];
-    cache.size = data.size.height*data.size.width*4;
+    cache.key = url;
+    cache.size = data.length;
     cache.onDisk = NO;
 #if USE_MEM_CACHE
     _totalBytes+=cache.size;
@@ -152,7 +151,7 @@ static const char * sFileQueueName = "joimage_file_queue";
 #endif
     [self saveImage:data withCache:cache];
 }
-- (UIImage *)loadCacheWithKey:(NSString *)key
+- (UIImage *)loadCacheWithKey:(NSString *)key size:(float) maxsize
 {
     CLCache * cache = _objects[key];
     if (!cache)
@@ -165,12 +164,12 @@ static const char * sFileQueueName = "joimage_file_queue";
     }
     UIImage * image = nil;
     NSData * data = [NSData dataWithContentsOfFile: cache.cacheFile];
-    NSDictionary * opts = @{(__bridge id)kCGImageSourceShouldCache:(id)kCFBooleanTrue};
+    NSDictionary * opts = @{(__bridge id)kCGImageSourceThumbnailMaxPixelSize:@(maxsize),(__bridge id)kCGImageSourceCreateThumbnailFromImageIfAbsent:(id)kCFBooleanTrue};
     CGImageSourceRef cgimagesrc = CGImageSourceCreateWithData((__bridge CFDataRef)(data),NULL);
     
     if (cgimagesrc)
     {
-        CGImageRef cgimg = CGImageSourceCreateImageAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
+        CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
         if (cgimg)
         {
             image = [[UIImage alloc] initWithCGImage:cgimg];
@@ -190,11 +189,10 @@ static const char * sFileQueueName = "joimage_file_queue";
     cache.lastUsed = [[NSDate date] timeIntervalSince1970];
     return image;
 }
-- (void)saveImage:(UIImage*) image withCache:(CLCache *)cache
+- (void)saveImage:(NSData*) data withCache:(CLCache *)cache
 {
 #if USE_DISK_CACHE
         dispatch_async(_file_queue, ^{
-            NSData * data = UIImagePNGRepresentation(image);
             //the block
             if (!cache.cacheFile) {
                 cache.cacheFile =[self cachePathForKey:cache.key];

@@ -11,9 +11,9 @@
 
 @protocol JOImageCacheProvider
 @required
-- (void)cacheImage:(UIImage *) data forUrl:(NSString *)url maxSize:(NSInteger) imgSize;
+- (void)cacheImage:(NSData *) data forUrl:(NSString *)url;
 -( BOOL) loadCachedImageForUrl:(NSString *)url maxSize:(NSInteger) size onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed;
-- (BOOL)hasCacheForUrl:(NSString *)url maxSize:(NSInteger) size;
+- (BOOL)hasCacheForUrl:(NSString *)url ;
 - (void)save:(NSNotification*) noti;
 @end
 /**/
