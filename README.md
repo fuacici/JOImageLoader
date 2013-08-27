@@ -7,7 +7,6 @@ UIImage Additions (With cache and request management included)
   * Load image from Internet with NSURLConnection.
   * Cache image locally into disk, BUT NO cache policy support so far.
   * Efficient image decoding based on extra gcd queue to predecode. 
-  * 
   
 ###Usage: 
   
