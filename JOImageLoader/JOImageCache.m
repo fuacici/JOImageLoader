@@ -95,7 +95,7 @@ static const char * sFileQueueName = "joimage_file_queue";
 }
 -( BOOL) loadCachedImageForUrl:(NSString *)url maxSize:(NSInteger) size onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
-    NSString * key = [NSString stringWithFormat:@"%@_%d",url,size];
+    NSString * key = [NSString stringWithFormat:@"%@",url];
     dispatch_async(_file_queue, ^{
         UIImage * image = [self loadCacheWithKey: key size:size];
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -211,7 +211,7 @@ static const char * sFileQueueName = "joimage_file_queue";
 
     NSString * cachePlist = [_cachePath stringByAppendingPathComponent:@"jocache"];
     BOOL _r =[NSKeyedArchiver archiveRootObject:_objects toFile:cachePlist];
-    DebugLog(@"save to file %@",_r?@"success":@"failed");
+//    DebugLog(@"save to file %@",_r?@"success":@"failed");
 }
 - (NSString *)cachePathForKey:(NSString *)key
 {

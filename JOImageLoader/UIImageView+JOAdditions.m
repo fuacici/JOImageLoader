@@ -23,7 +23,7 @@ static char imageUrlKey = '\0';
 
 - (id)setImageWithUrlString:(NSString *) urlstring
 {
-    return  [self setImageWithUrlString: urlstring maxSize: self.bounds.size.width placeHolder:nil animate:NO indicator:NO];
+    return  [self setImageWithUrlString: urlstring maxSize: self.bounds.size.width*[UIScreen mainScreen].scale placeHolder:nil animate:NO indicator:NO];
 }
 - (id)setImageWithUrlString:(NSString *) str maxSize:(NSInteger) maxsize placeHolder:(UIImage *) placeholder animate:(BOOL) animate  indicator:(BOOL) useIndicator
 {
