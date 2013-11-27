@@ -42,15 +42,18 @@
     UIImageView * img = (UIImageView*) [cell viewWithTag:20];
     if (!img)
     {
-        img = [[UIImageView alloc] initWithFrame:CGRectMake(5, 7, 70 , 70)];
-        img.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        img = [[UIImageView alloc] initWithFrame:CGRectMake(10, 0, 70 , 70)];
+        img.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleLeftMargin;
         [cell.contentView addSubview: img];
+        img.clipsToBounds=YES;
+        img.contentMode = UIViewContentModeScaleAspectFit;
+        img.tag =20;
     }else
     {
       //set to default img
-      img.image =nil;
+//      img.image =nil;
     }
-    [img setImageWithUrlString: _items[indexPath.row] maxSize: 0 placeHolder:nil animate:NO indicator:YES];
+    [img setImageWithUrlString: _items[indexPath.row] maxSize: 120 placeHolder:nil animate:NO indicator:YES];
     return cell;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -66,5 +69,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSLog(@"%@",indexPath);
+}
 @end

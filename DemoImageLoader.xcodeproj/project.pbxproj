@@ -56,7 +56,7 @@
 		C8FFBE07173A2FE4003371E8 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C8FFBE0A173A2FE4003371E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		C8FFBE0C173A2FE4003371E8 /* JOFirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JOFirstViewController.h; sourceTree = "<group>"; };
-		C8FFBE0D173A2FE4003371E8 /* JOFirstViewController.m */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = JOFirstViewController.m; sourceTree = "<group>"; };
+		C8FFBE0D173A2FE4003371E8 /* JOFirstViewController.m */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = JOFirstViewController.m; sourceTree = "<group>"; };
 		C8FFBE0F173A2FE4003371E8 /* first.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = first.png; sourceTree = "<group>"; };
 		C8FFBE11173A2FE4003371E8 /* first@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first@2x.png"; sourceTree = "<group>"; };
 		C8FFBE13173A2FE4003371E8 /* JOSecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JOSecondViewController.h; sourceTree = "<group>"; };

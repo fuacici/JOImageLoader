@@ -58,11 +58,12 @@ static char * const sImageQueueName = "jo_image_process_queue";
         }];
     }else
     {
-        //query if there's a request
+        //query if there's a request for current url
         NSString * key = [NSString stringWithFormat:@"%@_%d",urlStr,maxsize];
         JOImageRequest * request = _requestMap[key];
         if (!request)
-        {            
+        {
+            //create a request for url
             request = [JOImageRequest requestWithUrlString:urlStr onSuccess:^(NSData *data, JOImageRequest *request) {
                 dispatch_async(image_process_queue, ^{
                      UIImage *img = nil;

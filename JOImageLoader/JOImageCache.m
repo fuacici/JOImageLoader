@@ -61,6 +61,8 @@ static const char * sFileQueueName = "joimage_file_queue";
 @property (nonatomic) size_t totalBytes;
 @end
 /**/
+//// TODO:
+// currently doesn't support memory cache, all images saved in files.
 @implementation JOImageCache
 - (id)init
 {
@@ -164,23 +166,41 @@ static const char * sFileQueueName = "joimage_file_queue";
     }
     UIImage * image = nil;
     NSData * data = [NSData dataWithContentsOfFile: cache.cacheFile];
-    NSDictionary * opts = @{(__bridge id)kCGImageSourceThumbnailMaxPixelSize:@(maxsize),(__bridge id)kCGImageSourceCreateThumbnailFromImageIfAbsent:(id)kCFBooleanTrue};
-    CGImageSourceRef cgimagesrc = CGImageSourceCreateWithData((__bridge CFDataRef)(data),NULL);
-    
-    if (cgimagesrc)
+    if (!data)
     {
-        CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
-        if (cgimg)
+        [_objects removeObjectForKey:key];
+        return nil;
+    }
+    if (maxsize <1)
+    {
+         image = [UIImage imageWithData:data];
+    }else
+    {
+        NSDictionary * opts = @{(__bridge id)kCGImageSourceThumbnailMaxPixelSize:@(maxsize),(__bridge id)kCGImageSourceCreateThumbnailFromImageIfAbsent:(id)kCFBooleanTrue};
+        CGImageSourceRef cgimagesrc = CGImageSourceCreateWithData((__bridge CFDataRef)(data),NULL);
+        
+        if (cgimagesrc)
         {
-            image = [[UIImage alloc] initWithCGImage:cgimg];
-            CGImageRelease(cgimg);
+            CGImageRef cgimg = CGImageSourceCreateThumbnailAtIndex(cgimagesrc, 0, (__bridge CFDictionaryRef)opts);
+            if (cgimg)
+            {
+                image = [[UIImage alloc] initWithCGImage:cgimg];
+                CGImageRelease(cgimg);
+            }
+            CFRelease(cgimagesrc);
         }
-        CFRelease(cgimagesrc);
+        
+        //thumbnail failed, use original image
+        if (!image)
+        {
+            image = [UIImage imageWithData:data];
+        }
     }
     
-
+    //check if image exsit
     if (!image)
     {
+        
         [_objects removeObjectForKey:key];
         return nil;
     }
@@ -197,10 +217,10 @@ static const char * sFileQueueName = "joimage_file_queue";
             if (!cache.cacheFile) {
                 cache.cacheFile =[self cachePathForKey:cache.key];
             }
-            [data writeToFile:cache.cacheFile atomically:YES];
+            BOOL r = [data writeToFile:cache.cacheFile atomically:YES];
 #endif
             dispatch_async(dispatch_get_main_queue(), ^{
-                cache.onDisk = YES;
+                cache.onDisk = r;
             });
 #if USE_DISK_CACHE
         });
@@ -222,7 +242,10 @@ static const char * sFileQueueName = "joimage_file_queue";
 {
     if (_file_queue)
     {
+        // for deployment target lower than iOS 6.0 or Mac OS X 10.8 , ARC will NOT manage dispatch queues for you
+#if  !OS_OBJECT_USE_OBJC
         dispatch_release(_file_queue);
+#endif
         _file_queue = nil;
     }
     [[NSNotificationCenter defaultCenter] removeObserver:self];

@@ -33,7 +33,7 @@ static char imageUrlKey = '\0';
         return nil;
     }
     
-     self.image = placeholder;
+    self.image = placeholder;
     self.urlString = str;
     if (!self.urlString)
     {
@@ -46,32 +46,34 @@ static char imageUrlKey = '\0';
     {
             [self.indicator startAnimating];
     }
+    __weak UIImageView * this = self;
     //self.bounds.size.height*2
     [imageLoader loadImageWithUrl: str maxSize: maxsize onSuccess:^(UIImage *image, NSString *urlString) {
-        if ([urlString isEqualToString: self.urlString])
+        if (this && [urlString isEqualToString: this.urlString])
         {
             //downsampled image
-            self.image = image;
+            this.image = image;
             if (animate)
             {
                 CATransition * transition = [CATransition animation];
                 transition.type = kCATransitionFade;
                 transition.duration = 0.2;
-                [self.layer addAnimation: transition forKey:@"transition"];
+                transition.removedOnCompletion = YES;
+                [this.layer addAnimation: transition forKey:@"transition"];
             }
             if (useIndicator)
             {
-                [self.indicator stopAnimating];
+                [this.indicator stopAnimating];
             }
         
         }
                 
     } onFail:^(NSString *urlString, NSError *err) {
-        if ([urlString isEqualToString: self.urlString])
+        if ([urlString isEqualToString: this.urlString])
         {
             if (useIndicator)
             {
-                [self.indicator stopAnimating];
+                [this.indicator stopAnimating];
             }
         }
         
