@@ -11,6 +11,8 @@
 		C83BE2A9173B89E200B2DE15 /* JOImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A4173B89E200B2DE15 /* JOImageCache.m */; };
 		C83BE2AA173B89E200B2DE15 /* JOImageLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A6173B89E200B2DE15 /* JOImageLoader.m */; };
 		C83BE2AB173B89E200B2DE15 /* UIImageView+JOAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */; };
+		C86F2C9718458573001430AA /* urls.json in Resources */ = {isa = PBXBuildFile; fileRef = C86F2C9618458573001430AA /* urls.json */; };
+		C86F2C9918458710001430AA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C86F2C9818458710001430AA /* QuartzCore.framework */; };
 		C8FFBDF2173A2FE4003371E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF1173A2FE4003371E8 /* UIKit.framework */; };
 		C8FFBDF4173A2FE4003371E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF3173A2FE4003371E8 /* Foundation.framework */; };
 		C8FFBDF6173A2FE4003371E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF5173A2FE4003371E8 /* CoreGraphics.framework */; };
@@ -37,6 +39,8 @@
 		C83BE2A6173B89E200B2DE15 /* JOImageLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOImageLoader.m; sourceTree = "<group>"; };
 		C83BE2A7173B89E200B2DE15 /* UIImageView+JOAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+JOAdditions.h"; sourceTree = "<group>"; };
 		C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+JOAdditions.m"; sourceTree = "<group>"; };
+		C86F2C9618458573001430AA /* urls.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = urls.json; sourceTree = "<group>"; };
+		C86F2C9818458710001430AA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		C8FFBDEE173A2FE4003371E8 /* DemoImageLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoImageLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8FFBDF1173A2FE4003371E8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C8FFBDF3173A2FE4003371E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -52,7 +56,7 @@
 		C8FFBE07173A2FE4003371E8 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		C8FFBE0A173A2FE4003371E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		C8FFBE0C173A2FE4003371E8 /* JOFirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JOFirstViewController.h; sourceTree = "<group>"; };
-		C8FFBE0D173A2FE4003371E8 /* JOFirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JOFirstViewController.m; sourceTree = "<group>"; };
+		C8FFBE0D173A2FE4003371E8 /* JOFirstViewController.m */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.objc; path = JOFirstViewController.m; sourceTree = "<group>"; };
 		C8FFBE0F173A2FE4003371E8 /* first.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = first.png; sourceTree = "<group>"; };
 		C8FFBE11173A2FE4003371E8 /* first@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first@2x.png"; sourceTree = "<group>"; };
 		C8FFBE13173A2FE4003371E8 /* JOSecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JOSecondViewController.h; sourceTree = "<group>"; };
@@ -66,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C86F2C9918458710001430AA /* QuartzCore.framework in Frameworks */,
 				C80E6C8817464172006D3AE8 /* ImageIO.framework in Frameworks */,
 				C8FFBDF2173A2FE4003371E8 /* UIKit.framework in Frameworks */,
 				C8FFBDF4173A2FE4003371E8 /* Foundation.framework in Frameworks */,
@@ -110,6 +115,7 @@
 		C8FFBDF0173A2FE4003371E8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C86F2C9818458710001430AA /* QuartzCore.framework */,
 				C8FFBDF1173A2FE4003371E8 /* UIKit.framework */,
 				C8FFBDF3173A2FE4003371E8 /* Foundation.framework */,
 				C8FFBDF5173A2FE4003371E8 /* CoreGraphics.framework */,
@@ -133,6 +139,7 @@
 				C8FFBE16173A2FE4003371E8 /* second.png */,
 				C8FFBE18173A2FE4003371E8 /* second@2x.png */,
 				C8FFBDF8173A2FE4003371E8 /* Supporting Files */,
+				C86F2C9618458573001430AA /* urls.json */,
 			);
 			path = DemoImageLoader;
 			sourceTree = "<group>";
@@ -212,6 +219,7 @@
 				C8FFBE12173A2FE4003371E8 /* first@2x.png in Resources */,
 				C8FFBE17173A2FE4003371E8 /* second.png in Resources */,
 				C8FFBE19173A2FE4003371E8 /* second@2x.png in Resources */,
+				C86F2C9718458573001430AA /* urls.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,7 +324,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DemoImageLoader/DemoImageLoader-Prefix.pch";
 				INFOPLIST_FILE = "DemoImageLoader/DemoImageLoader-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -328,7 +336,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "DemoImageLoader/DemoImageLoader-Prefix.pch";
 				INFOPLIST_FILE = "DemoImageLoader/DemoImageLoader-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

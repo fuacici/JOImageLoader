@@ -31,14 +31,20 @@ static char * const sImageQueueName = "jo_image_process_queue";
     }
     return self;
 }
+
+
 - (void)dealloc
 {
     if (image_process_queue)
     {
+// for deployment target lower than iOS 6.0 or Mac OS X 10.8 , ARC will NOT manage dispatch queues for you
+#if  !OS_OBJECT_USE_OBJC
         dispatch_release(image_process_queue);
-        image_process_queue = 0;
+#endif
+        image_process_queue = nil;
     }
 }
+
 - (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
     BOOL hasCache = [_cache hasCacheForUrl:urlStr];
