@@ -141,7 +141,10 @@ static char * const sImageQueueName = "jo_image_process_queue";
 {
     [_connection cancel];
     _request = [NSURLRequest requestWithURL:[NSURL URLWithString: _urlString]];
-    _connection = [NSURLConnection connectionWithRequest:_request delegate:self];
+    _connection = [[NSURLConnection alloc] initWithRequest:_request delegate:self startImmediately:NO];
+    //would NOT STOP loading even if users interacting with touch screen, like dragging.
+    [_connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+    [_connection start];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
