@@ -5,7 +5,7 @@ UIImage Additions (With cache and request management included)
 ###Features:
 
   * Load image from Internet with NSURLConnection.
-  * Cache image locally into disk, BUT NO cache policy support so far.
+  * Cache image locally into disk, **BUT NO Cache** policy support so far,(No expiration mechanism, once cached never refreshed).
   * Efficient image decoding based on extra gcd queue to predecode. 
   
 ###Usage: 
