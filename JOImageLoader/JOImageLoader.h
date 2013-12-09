@@ -17,17 +17,3 @@ typedef void (^JOImageErrorBlock)(NSString* urlString, NSError * err) ;
 - (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed;
 @end
 
-#pragma mark -
-#pragma mark Request
-@class JOImageRequest;
-typedef void (^JOResponseBlock)(NSData * data, JOImageRequest * request);
-typedef void (^JOErrorResponseBlock)(NSError * err , JOImageRequest * request);
-
-@interface JOImageRequest:NSObject<NSURLConnectionDataDelegate>
-@property (nonatomic,readonly) NSURLConnection * connection;
-@property (nonatomic,readonly) NSString * urlString;
-@property (nonatomic,readonly) NSMutableArray  * callbacks;
-@property (nonatomic,readonly) NSMutableData * data;
-- (void)load;
-+ (id)requestWithUrlString:(NSString *) urlStr onSuccess:(JOResponseBlock) succeed onFail:(JOErrorResponseBlock) failed;
-@end

@@ -13,6 +13,7 @@
 		C83BE2AB173B89E200B2DE15 /* UIImageView+JOAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */; };
 		C86F2C9718458573001430AA /* urls.json in Resources */ = {isa = PBXBuildFile; fileRef = C86F2C9618458573001430AA /* urls.json */; };
 		C86F2C9918458710001430AA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C86F2C9818458710001430AA /* QuartzCore.framework */; };
+		C8CB55C41855AD4F0025129E /* JOImageRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = C8CB55C31855AD4F0025129E /* JOImageRequest.m */; };
 		C8FFBDF2173A2FE4003371E8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF1173A2FE4003371E8 /* UIKit.framework */; };
 		C8FFBDF4173A2FE4003371E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF3173A2FE4003371E8 /* Foundation.framework */; };
 		C8FFBDF6173A2FE4003371E8 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8FFBDF5173A2FE4003371E8 /* CoreGraphics.framework */; };
@@ -41,6 +42,8 @@
 		C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+JOAdditions.m"; sourceTree = "<group>"; };
 		C86F2C9618458573001430AA /* urls.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = urls.json; sourceTree = "<group>"; };
 		C86F2C9818458710001430AA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		C8CB55C21855AD4F0025129E /* JOImageRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JOImageRequest.h; sourceTree = "<group>"; };
+		C8CB55C31855AD4F0025129E /* JOImageRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JOImageRequest.m; sourceTree = "<group>"; };
 		C8FFBDEE173A2FE4003371E8 /* DemoImageLoader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoImageLoader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8FFBDF1173A2FE4003371E8 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		C8FFBDF3173A2FE4003371E8 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -90,6 +93,8 @@
 				C83BE2A6173B89E200B2DE15 /* JOImageLoader.m */,
 				C83BE2A7173B89E200B2DE15 /* UIImageView+JOAdditions.h */,
 				C83BE2A8173B89E200B2DE15 /* UIImageView+JOAdditions.m */,
+				C8CB55C21855AD4F0025129E /* JOImageRequest.h */,
+				C8CB55C31855AD4F0025129E /* JOImageRequest.m */,
 			);
 			path = JOImageLoader;
 			sourceTree = SOURCE_ROOT;
@@ -230,6 +235,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8CB55C41855AD4F0025129E /* JOImageRequest.m in Sources */,
 				C8FFBDFE173A2FE4003371E8 /* main.m in Sources */,
 				C8FFBE02173A2FE4003371E8 /* JOAppDelegate.m in Sources */,
 				C8FFBE0E173A2FE4003371E8 /* JOFirstViewController.m in Sources */,
