@@ -27,3 +27,7 @@ UIImage Additions (With cache and request management included)
 ###Todo:
 
   * Add support for cache control.(etag, Expires, if-not-modified,etc)
+
+###Notes for me:
+  * only save origin image into disk even if called with downscalation.
+  * 
