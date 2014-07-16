@@ -9,6 +9,7 @@
 #import "JOImageLoader.h"
 #import "JOImageCache.h"
 #import <ImageIO/ImageIO.h>
+#import "JOImageRequest.h"
 
 #pragma mark JOImageLoader Private Methods
 @interface JOImageLoader(/*Private Methods*/)
@@ -31,14 +32,20 @@ static char * const sImageQueueName = "jo_image_process_queue";
     }
     return self;
 }
+
+
 - (void)dealloc
 {
     if (image_process_queue)
     {
+// for deployment target lower than iOS 6.0 or Mac OS X 10.8 , ARC will NOT manage dispatch queues for you
+#if  !OS_OBJECT_USE_OBJC
         dispatch_release(image_process_queue);
-        image_process_queue = 0;
+#endif
+        image_process_queue = nil;
     }
 }
+
 - (BOOL)loadImageWithUrl:(NSString *) urlStr maxSize:(NSInteger) maxsize onSuccess:(JOImageResponseBlock) succeed onFail:(JOImageErrorBlock) failed
 {
     BOOL hasCache = [_cache hasCacheForUrl:urlStr];
@@ -52,11 +59,12 @@ static char * const sImageQueueName = "jo_image_process_queue";
         }];
     }else
     {
-        //query if there's a request
+        //query if there's a request for current url
         NSString * key = [NSString stringWithFormat:@"%@_%d",urlStr,maxsize];
         JOImageRequest * request = _requestMap[key];
         if (!request)
-        {            
+        {
+            //create a request for url
             request = [JOImageRequest requestWithUrlString:urlStr onSuccess:^(NSData *data, JOImageRequest *request) {
                 dispatch_async(image_process_queue, ^{
                      UIImage *img = nil;
@@ -104,64 +112,5 @@ static char * const sImageQueueName = "jo_image_process_queue";
         request = nil;
     }
     return YES;
-}
-@end
-
-#pragma mark -
-#pragma mark JOImageRequest
-@interface JOImageRequest(/*Private Methods*/)
-@property (nonatomic,strong) NSURLRequest * request;
-@property (nonatomic,strong) JOResponseBlock succeed;
-@property (nonatomic,strong) JOErrorResponseBlock failed;
-@end
-@implementation JOImageRequest
-+ (id)requestWithUrlString:(NSString *) urlStr onSuccess:(JOResponseBlock) succeed onFail:(JOErrorResponseBlock) failed
-{
-    JOImageRequest * r = [[JOImageRequest alloc] initWithUrlString:urlStr];
-    r.succeed = succeed;
-    r.failed = failed;
-    return r;
-}
-- (id)initWithUrlString:(NSString *) urlstr
-{
-    self = [super init];
-    if (self) {
-        _callbacks=[NSMutableArray arrayWithCapacity:5];
-        _urlString = urlstr;
-    }
-    return self;
-}
-- (void)load
-{
-    [_connection cancel];
-    _request = [NSURLRequest requestWithURL:[NSURL URLWithString: _urlString]];
-    _connection = [NSURLConnection connectionWithRequest:_request delegate:self];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    
-}
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-    if (_data)
-    {
-        [_data appendData: data];
-    }else
-    {
-        _data = [NSMutableData dataWithData: data];
-    }
-}
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    _succeed(_data,self);
-}
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
-{
-    _failed(error,self);
-}
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)response
-{
-    return request;
 }
 @end
